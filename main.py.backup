@@ -1,0 +1,54 @@
+"""
+GründerAI Complete Assessment System
+FastAPI backend with Howard 7-dimension model, IRT-CAT, friction detection
+"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import sys
+import os
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+# Import API
+from api.assessment_api import app as assessment_app
+
+# Create main app
+app = FastAPI(
+    title="GründerAI Complete Assessment API",
+    description="Howard 7-dimension model with IRT-CAT adaptive testing",
+    version="3.0.0"
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Update in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount assessment API
+app.mount("/api", assessment_app)
+
+@app.get("/")
+async def root():
+    return {
+        "service": "GründerAI Complete Assessment System",
+        "version": "3.0.0",
+        "model": "Howard 7-Dimension Entrepreneurial Personality",
+        "features": [
+            "IRT-CAT Adaptive Testing",
+            "Friction Analysis",
+            "Contextual Scoring",
+            "Database Integration",
+            "Session Management"
+        ]
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
